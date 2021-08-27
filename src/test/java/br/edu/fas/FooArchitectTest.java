@@ -7,6 +7,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import org.junit.Test;
 
 import br.edu.fas.persistence.Dao;
+import br.edu.fas.service.Service;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -49,7 +50,6 @@ public class FooArchitectTest {
 
     }
 
-
     @Test
     public void verificarImplementacaoInterfaceDao() {
 
@@ -60,7 +60,7 @@ public class FooArchitectTest {
         rule.check(importedClasses);
 
     }
-
+    
     @Test
     public void verificarDependenciasCiclicas() {
 
@@ -83,5 +83,64 @@ public class FooArchitectTest {
         rule.check(importedClasses);
 
     }
-    
+
+    //teste novo implementado, análogo ao de persistencia (serviço)
+    @Test
+    public void verificarDependenciasParaCamadaServico() {
+
+        ArchRule rule = classes()
+        .that().resideInAPackage("..service..")
+        .should().onlyHaveDependentClassesThat().resideInAnyPackage("..persistence..", "..service..");    
+
+        rule.check(importedClasses);
+
+    }
+
+    //teste novo implementado, análogo ao de persistencia (serviço)
+    @Test
+    public void verificarDependenciasDaCamadaServico(){
+        ArchRule rule = noClasses()
+        .that().resideInAPackage("..service..")
+        .should().dependOnClassesThat().resideInAnyPackage("..persistence..");
+
+        rule.check(importedClasses);
+
+    }
+
+    //teste novo implementado, análogo ao de persistencia (serviço)
+    @Test
+    public void verificarNomesClassesCamadaServico() {
+
+        ArchRule rule = classes()
+        .that().haveSimpleNameEndingWith("Service")
+        .should().resideInAPackage("..service..");
+
+        rule.check(importedClasses);
+
+    }
+    //teste novo implementado, análogo ao de persistencia (serviço)
+    @Test
+    public void verificarImplementacaoInterfaceService() {
+
+        ArchRule rule = classes()
+        .that().implement(Service.class)
+        .should().haveSimpleNameEndingWith("Service");
+
+        rule.check(importedClasses);
+
+    }
+    //teste novo implementado, análogo ao de violação camada 
+    @Test
+    public void verificarOutraViolacaoCamadas() {
+
+        ArchRule rule = layeredArchitecture()
+        .layer("Business").definedBy("..business..")
+        .layer("Service").definedBy("..service..")
+            
+        .whereLayer("Service").mayOnlyBeAccessedByLayers("Business");
+
+        rule.check(importedClasses);
+
+    }
+
 }

@@ -1,11 +1,9 @@
 package br.edu.fas.business;
 
-import br.edu.fas.persistence.Dao;
-import br.edu.fas.persistence.FooDao;
 
-public class Foo implements Dao {
+public class Foo {
 
-    FooDao fooDao = new FooDao();
+    Foo foo = new Foo();
 
     
 }
